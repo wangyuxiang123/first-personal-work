@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>全球新冠疫情实时数据地图</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #container{width: 100%; height: 800px; margin:0 auto;}
+    </style>
+</head>
+
+<body>
+<div id="container"></div>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat@latest/dist/ecStat.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="world.js"></script>
+
+<script>
+var myChart = echarts.init(document.getElementById("container"));
+var options = {
+    title:{
+        text:'全球新冠疫情实时数据地图',
+        left:'center',
+        textStyle:{
+            fontSize:25
+        }
+    },
+    tooltip: {
+        trigger: 'item'
+
+    },
+    legend:{
+        orient:'vertical',
+        left:'left',
+        data:['全球新冠疫情实时数据地图']
+    },
+    toolbox: {
+        show: true,
+        orient: 'vertical',
+        left: 'left',
+        top: 'center',
+        feature: {
+            dataView: {readOnly: false},
+            restore: {},
+            saveAsImage: {}
+        }
+    },
+    visualMap:{
+        type:"piecewise",
+        left: '',
+        pieces:[
+            {
+                min:100000,
+                max:1000000000,
+                lable:'确诊人数大于等于100000人',
+                color:'#372a28'
+            },
+            {
+                min:9999,
+                max:99999,
+                lable:'确诊人数大于等于9999-999999人',
+                color:'#4e160f'
+            },
+            {
+                min:1000,
+                max:9999,
+                lable:'确诊人数大于等于1000-9999人',
+                color:'#974236'
+            },
+            {
+                min:100,
+                max:999,
+                lable:'确诊人数大于等于100-999人',
+                color:'#ee7263'
+            },
+            {
+                min:1,
+                max:99,
+                lable:'确诊人数大于等于1-99人',
+                color:'#f5bba7'
+            }
+        ]
+    },
+
+    series: [
+        {
+            name:'当前确诊数',
+            type:'map',
+            mapType:'world',
+            zoom:1,
+            roma:true,
+            scaleLimit:{
+                min:0,
+                max:5
+            },
+            data: []
+        }
+    ]
+};
+
+$(document).ready(function () {
+    $.ajax({
+        url: '../Data/global_epidemic_statistics.json',
+        async: false,
+        success: function (data) {
+            options.series[0].data = data;
+            myChart.setOption(options);         //绘制界面
+        }
+    });
+});
+
+
+</script>
+</body>
+</html>
+    
